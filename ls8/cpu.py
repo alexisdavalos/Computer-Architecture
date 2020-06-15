@@ -4,10 +4,18 @@ import sys
 
 class CPU:
     """Main CPU class."""
+    
+    """
+    
+
+    """
+
 
     def __init__(self):
         """Construct a new CPU."""
-        pass
+        self.ram = [0] * 256
+        self.pc = 0
+        self.reg = [0] * 8
 
     def load(self):
         """Load a program into memory."""
@@ -28,8 +36,10 @@ class CPU:
 
         for instruction in program:
             self.ram[address] = instruction
+            print(f'I AM AN INSTRUCTION: {self.ram[address]}')
             address += 1
-
+        
+        print(f'Ram:{self.ram}')
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
@@ -63,3 +73,19 @@ class CPU:
     def run(self):
         """Run the CPU."""
         pass
+    
+    def ram_read(self):
+        pass
+
+    def ram_write(self):
+        pass
+
+
+myPC = CPU()
+
+print(myPC.reg)
+myPC.load()
+myPC.run()
+
+
+
