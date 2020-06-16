@@ -22,23 +22,27 @@ class CPU:
         self.ram = [0] * 256
         self.pc = 0
         self.reg = [0] * 8
-
-    def load(self):
+        self.MUL = 0b10100010
+        self.PRN = 0b01000111
+        self.LDI = 0b10000010
+        self.HLT = 0b00000001
+    
+    def load(self, program):
         """Load a program into memory."""
 
         address = 0
 
         # For now, we've just hardcoded a program:
 
-        program = [
+       #  program = [
             # From print8.ls8
-            0b100000101010101010, # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            0b00000001, # HLT
-        ]
+       #     0b10000010, # LDI R0,8
+       #     0b00000000,
+       #     0b00001000,
+       #     0b01000111, # PRN R0
+       #     0b00000000,
+       #     0b00000001, # HLT
+       # ]
 
         for instruction in program:
             self.ram[address] = instruction
@@ -49,10 +53,10 @@ class CPU:
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
-
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
-        #elif op == "SUB": etc
+        if op == "MUL":
+            self.reg[reg_a] *= self.reg[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -81,12 +85,15 @@ class CPU:
         running = True
         while running:
             ir = self.ram[self.pc]
-            if ir == 130:
+            if ir == self.LDI:
                 self.ldi()
-            elif ir == 71:
-                self.prn()
-        
-            elif ir == 1:
+            elif ir == self.MUL:
+               #TODO
+               # define multiply method
+               self.mult()
+            elif ir == self.PRN:
+                self.prn() 
+            elif ir == self.HLT:
                 running = self.hlt()
 
             else:
@@ -117,10 +124,16 @@ class CPU:
     def hlt(self):
         self.pc +=1
         return False
-myPC = CPU()
 
-myPC.load()
-myPC.run()
+    def mult(self):
+       # a = self.ram[self.pc+1]
+       # b = self.ram[self.pc+2]
+       #  print(f'a: {a}, b: {b}')
+        self.alu("MUL", 0, 1)
+        print(f'Ram: {self.ram}')
+        print(f'Reg: {self.reg}')
+        self.pc +=3
+
 #print('---------------')
 #print(myPC.ram_read(2))
 
