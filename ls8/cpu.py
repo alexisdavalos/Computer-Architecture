@@ -6,7 +6,13 @@ class CPU:
     """Main CPU class."""
     
     """
-    
+    Already implemented:
+    - load method, alu method, trace method
+    Needs to be implemented:
+    - cpu constructor
+        - Ram
+        - Program Counter
+        - General Purpose Register
 
     """
 
@@ -26,7 +32,7 @@ class CPU:
 
         program = [
             # From print8.ls8
-            0b10000010, # LDI R0,8
+            0b100000101010101010, # LDI R0,8
             0b00000000,
             0b00001000,
             0b01000111, # PRN R0
@@ -36,10 +42,10 @@ class CPU:
 
         for instruction in program:
             self.ram[address] = instruction
-            print(f'I AM AN INSTRUCTION: {self.ram[address]}')
+            #print(f'I AM AN INSTRUCTION: {self.ram[address]}')
             address += 1
         
-        print(f'Ram:{self.ram}')
+       # print(f'Ram:{self.ram}')
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
@@ -71,21 +77,53 @@ class CPU:
         print()
 
     def run(self):
-        """Run the CPU."""
-        pass
+        """Run the CPU.""" 
+        running = True
+        while running:
+            ir = self.ram[self.pc]
+            if ir == 130:
+                self.ldi()
+            elif ir == 71:
+                self.prn()
+        
+            elif ir == 1:
+                running = self.hlt()
+
+            else:
+                print(f'Unknown instruction {ir} at address {self.pc}')
+                sys.exit(1)
+
+    def ram_read(self, address):
+        # accept address
+        # return it's value
+        return f'Read from Ram: {self.ram[address]}'
+    def ram_write(self, value, address):
+        # take a value
+        # write to address
+        # no return 
+        self.ram[address] = value 
     
-    def ram_read(self):
-        pass
+    def ldi(self):
+        address = self.ram[self.pc + 1]
+        value = self.ram[self.pc + 2] 
+        self.reg[address] = value
+        self.pc +=3
+    
+    def prn(self):
+        address = self.ram[self.pc+1]
+        print(self.reg[address])
+        self.pc +=2
 
-    def ram_write(self):
-        pass
-
-
+    def hlt(self):
+        self.pc +=1
+        return False
 myPC = CPU()
 
-print(myPC.reg)
 myPC.load()
 myPC.run()
+#print('---------------')
+#print(myPC.ram_read(2))
+
 
 
 
