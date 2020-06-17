@@ -1,29 +1,23 @@
-#!/usr/bin/env python3
+#!usr/bin/env python3
 
 """Main."""
 
 import sys
 from cpu import *
 
-mult = [ 
-0b10000010, #LDI, R0, 8 
-0b00000000,
-0b00001000,
-0b10000010, #LDI, R1, 9
-0b00000001,
-0b00001001,
-0b10100010, # MUL R0,R1
-0b00000000,
-0b00000001,
-0b01000111, # PRN R0
-0b00000000,
-0b00000001, # HLT
-]
-
-
+# initialiaze empty array
+program = []
+# read from file and store program from file specified in terminal
+file_name = sys.argv[1]
+print(file_name)
+with open(file_name) as f:
+    for line in f:
+        if line[0]!= '#':
+            num = int(line[0:8], 2)
+            program.append(num)
+    print(program)
 
 cpu = CPU()
-
-cpu.load(mult)
+cpu.load(program)
 cpu.run()
 #cpu.mult()

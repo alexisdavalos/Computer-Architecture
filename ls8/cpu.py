@@ -83,6 +83,7 @@ class CPU:
     def run(self):
         """Run the CPU.""" 
         running = True
+        #TODO Build Dictionary for storing instructions
         while running:
             ir = self.ram[self.pc]
             if ir == self.LDI:
@@ -130,7 +131,7 @@ class CPU:
        # b = self.ram[self.pc+2]
        #  print(f'a: {a}, b: {b}')
         self.alu("MUL", 0, 1)
-        print(f'Ram: {self.ram}')
+        print(f'Ram: {self.ram[:15]}')
         print(f'Reg: {self.reg}')
         self.pc +=3
 
