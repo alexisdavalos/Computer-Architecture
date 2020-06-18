@@ -2,13 +2,14 @@
 
 import sys
 #TODO
-# [] Implement Stack Push
-# [] Implement Stack Pop
-# [] Format RAM Partition
-# [] Initialize Stack Pointer @ reg[-1]
+# [X] Implement Stack Push
+# [X] Implement Stack Pop
+# [X] Format RAM Partition
+# [X] Initialize Stack Pointer @ reg[-1]
 
-#Plan of Attack
-# SP = 7
+# Day 4:
+# [ ] Implement the CALL and RET instructions
+# [ ] Implement Subroutine Calls and be able to run the call.ls8 program
 
 
 
@@ -30,8 +31,8 @@ class CPU:
         """Construct a new CPU."""
         self.ram = [0] * 256 # Array map of empty memory
         self.pc = 0 # program/command counter
-        self.sp = 0xF4 # stack pointer
         self.reg = [0] * 8 # REG to store values from RAM
+        self.sp = 0XF3 # stack pointer
         self.name = ''
         self.running = False # Boolean to toggle Machine ON/OFF
         self.MUL = 0b10100010
@@ -55,8 +56,6 @@ class CPU:
             else:
                 self.reg[i] = self.sp
         
-        # Formats Stack Pointer 
-        self.ram[self.sp] = f'SP:{hex(self.sp)}'
         # Marks Reserved Partition of RAM
         self.ram[self.sp+1:] = f'Reserved!'
         
@@ -72,7 +71,7 @@ class CPU:
 
     def report(self):
         # Define Stack
-        stack = f'Head ->{self.ram[self.sp:0xf4]}<- Tail'
+        stack = f'Head ->{self.ram[self.sp:0xf3]}<- Tail'
 
         print(f'\n---------------------')
         print(f'Machine State Report')    
@@ -199,27 +198,33 @@ class CPU:
     def push(self):
         # Decrement the 'SP'
         self.sp -= 1
+        # Decrement the REG SP
+        self.reg[-1] -= 1
         # Copy the value in given register
         address = self.ram[self.pc + 1]
         value = self.reg[address]
         #put value at the top of stack
         self.ram[self.sp] = value
         # Print Action
-      
-        # print(f'Pushed [{self.ram[self.sp]}] To Top of Stack!')
+        print(f'Pushed [{self.ram[self.sp]}] To Top of Stack!')
         # Increment Program/Command Counter
         self.pc +=2
+    
 
     def pop(self):
-        # # Grab address
-        # address = self.ram[self.pc + 1]
+        cur = self.reg[-1]
+        # Grab value
+        value = self.ram[cur]
         # # Grab value
-        # value = self.reg[address]
+        # self.reg[address] = self.ram[cur]
         # # clear current
-        # self.sp +=1
-        # print(f'popped: {value} ')
+        self.reg[-1] += 1
+        self.sp += 1
+        print(f'Popped [{value}] From Top of Stack!')
         self.pc += 2
         pass
+    
+     
 
 #print('---------------')
 #print(myPC.ram_read(2))
