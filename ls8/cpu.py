@@ -8,12 +8,11 @@ class CPU:
     """
     Already implemented:
     - load method, alu method, trace method
-    Needs to be implemented:
     - cpu constructor
         - Ram
         - Program Counter
         - General Purpose Register
-
+    - hash table for accessing program function O(1) lookup
     """
 
 
@@ -22,10 +21,13 @@ class CPU:
         self.ram = [0] * 256
         self.pc = 0
         self.reg = [0] * 8
+        self.running = False
         self.MUL = 0b10100010
         self.PRN = 0b01000111
         self.LDI = 0b10000010
         self.HLT = 0b00000001
+        self.PUSH = 0b01000101
+        self.POP = 0b01000110
     
     def load(self, program):
         """Load a program into memory."""
@@ -46,7 +48,6 @@ class CPU:
 
         for instruction in program:
             self.ram[address] = instruction
-            #print(f'I AM AN INSTRUCTION: {self.ram[address]}')
             address += 1
         
        # print(f'Ram:{self.ram}')
@@ -80,27 +81,61 @@ class CPU:
 
         print()
 
-    def run(self):
+    def run(self, branch_table = None):
+        # Old Solution
+        # """Run the CPU.""" 
+        # running = True
+        # #TODO Build Dictionary for storing instructions
+        # while running:
+        #     ir = self.ram[self.pc]
+        #     if ir == self.LDI:
+        #         self.ldi()
+        #     elif ir == self.MUL:
+        #        #TODO
+        #        # define multiply method
+        #        self.mult()
+        #     elif ir == self.PRN:
+        #         self.prn() 
+        #     elif ir == self.HLT:
+        #         running = self.hlt()        
+        #     else:
+        #         print(f'Unknown instruction {ir} at address {self.pc}')
+        #         sys.exit(1)
+
+        # Initialize Branch Table
+        branch_table = {
+            self.LDI : self.ldi,
+            self.PRN : self.prn,
+            self.MUL : self.mult,
+            self.HLT : self.hlt,
+            self.PUSH : self.push,
+            self.POP: self.pop,
+            }
+
         """Run the CPU.""" 
-        running = True
-        #TODO Build Dictionary for storing instructions
-        while running:
+        # toggle cpu running boolean
+        self.running = True
+        while self.running:
+            # ir is the binary value in ram at the index of pc
             ir = self.ram[self.pc]
-            if ir == self.LDI:
-                self.ldi()
-            elif ir == self.MUL:
-               #TODO
-               # define multiply method
-               self.mult()
-            elif ir == self.PRN:
-                self.prn() 
-            elif ir == self.HLT:
-                running = self.hlt()
-
-            else:
-                print(f'Unknown instruction {ir} at address {self.pc}')
+            # check if value is a key in our hash table
+            if ir in branch_table:
+                # run the function stored as the value of the key
+                branch_table[ir]()
+            # throw error
+            elif ir not in branch_table:
+                print(f"Unknown instruction {bin(ir)} at address {self.pc}")
                 sys.exit(1)
+            # print the state of ram and reg
+        
+        print(f'\n-----------------')
+        print(f'State of Ram: {self.ram[:self.pc]}')
+        print(f'-----------------\n')
 
+        print(f'\n-----------------')
+        print(f'State of Reg: {self.reg}')
+        print(f'-----------------\n')
+ 
     def ram_read(self, address):
         # accept address
         # return it's value
@@ -124,7 +159,10 @@ class CPU:
 
     def hlt(self):
         self.pc +=1
-        return False
+        self.running = False
+        print(f'\n-------------------')
+        print(f'Program Terminating')
+        print(f'-------------------\n')
 
     def mult(self):
        # a = self.ram[self.pc+1]
@@ -134,6 +172,13 @@ class CPU:
         print(f'Ram: {self.ram[:15]}')
         print(f'Reg: {self.reg}')
         self.pc +=3
+    
+    def push(self):
+        self.pc +=2
+        pass
+    def pop(self):
+        self.pc+=2
+        pass
 
 #print('---------------')
 #print(myPC.ram_read(2))
