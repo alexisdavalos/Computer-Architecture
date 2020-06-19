@@ -37,10 +37,13 @@ with open(file_name) as f:
         value = ''
         if inst in Instructions:
             value = Instructions[inst]
-            print(f'{indx +1}: Instruction:({bin(inst)} or {inst}) = {value} \n ------------------------------------------------')
+            if int(bin(inst),2) != 0b00000001:
+                print(f'inst: {bin(inst)}')
+                print(f'value: {inst}')
+                print(f'Line {indx +1} Instruction:({bin(inst)} or {inst}) = {value} \n ------------------------------------------------')
         else:
             print(f'    - Number = {inst} \n    - Binary = ({bin(inst)})\n')
-        # Print The Instructio
+        # Print The Instructios
         
 cpu = CPU()
 cpu.load(program)
